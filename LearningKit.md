@@ -1,304 +1,142 @@
-# AI‑Assisted Codebase Learning Kit
+# Learning Kit for TradingAgents
 
-Use this pack to guide any AI agent (ChatGPT, Cursor, Copilot, etc.) to teach you a new repository **from shallow to deep**. Copy the master prompt, paste it into your AI, and keep the templates in your repo under `/docs/`.
+This document is your guide to understanding the TradingAgents project, from a high-level overview to the details of the code.
 
----
+## 1. Project Overview
 
-## 1) Master Prompt (copy‑paste)
+**TradingAgents** is a multi-agent financial trading framework that uses Large Language Models (LLMs) to analyze market data and make trading decisions. It simulates a trading firm with specialized agents for different types of analysis.
 
-**Role:** You are my *Codebase Tutor & Guide*. Your job is to teach me a new repository step‑by‑step, asking targeted questions, proposing a learning plan, and verifying my understanding with short quizzes. Start broad, then go deeper.
+The core of the project is built with **LangGraph**, a library for building stateful, multi-agent applications with LLMs.
 
-**Context (fill in):**
+## 2. Core Concepts
 
-* Project name: `<name>`
-* Repo: `<link or local path>`
-* Tech stack: `<e.g., React + TypeScript + Node/Express + Postgres>`
-* My role & background: `<e.g., FE engineer with basic GraphQL>`
-* Time available per day/week: `<e.g., 45 min/day, 5 days>`
-* Deadlines or goals: `<e.g., ship a bugfix in 1 week>`
+*   **Multi-Agent System:** The project uses a team of AI agents that collaborate to analyze financial data. Each agent has a specific role.
+*   **LangGraph:** This is the key library used to define and run the multi-agent system. It manages the state and the flow of information between agents.
+*   **Agent Roles:**
+    *   **Fundamental Analyst:** Evaluates company financials.
+    *   **Sentiment Analyst:** Gauges market mood from news and social media.
+    *   **Technical Analyst:** Uses technical indicators to find trading patterns.
+    *   **Trader:** Makes trading decisions based on the analysis of other agents.
+    *   **Risk Manager:** Evaluates and mitigates risks in trading strategies.
 
-**Objectives:**
+## 3. Project Structure
 
-1. Build a high‑level mental map (modules, services, build/run/test).
-2. Identify the primary user flows and the system’s critical path.
-3. Learn how to run, test, and debug locally.
-4. Understand data model, APIs, config, and CI/CD.
-5. Be able to ship a small change with tests.
+Here are the most important files and directories:
 
-**Interaction Rules:**
+*   `main.py`: A script to run the `TradingAgentsGraph` with a pre-defined configuration.
+*   `cli/main.py`: The entry point for the interactive command-line interface (CLI).
+*   `requirements.txt`: A list of all the Python libraries needed for the project.
+*   `tradingagents/default_config.py`: A centralized configuration file for managing settings like LLMs and data sources.
+*   **`tradingagents/`**: The core directory of the project.
+    *   **`agents/`**: Contains the implementation of all the different agents. This is a great place to start exploring the logic of the system.
+    *   **`dataflows/`**: Manages data from various sources like Finnhub, Yahoo Finance, and Reddit.
+    *   **`graph/`**: Defines the structure of the multi-agent system using LangGraph, including how the agents interact and share information.
 
-* Drive the process. At each step, ask me 3–5 **specific questions** maximum, then wait.
-* Never assume. If context is missing, ask concise questions first.
-* Prefer hands‑on tasks (read code, run commands, small edits) over theory.
-* Summarize what we learned at the end of each step.
-* Give me a short **quiz** (2–4 questions) after each major milestone.
-* When you propose commands or scripts, explain what they reveal.
-* Keep answers concise; use bullet points and checklists.
+## 4. How to Run the Project
 
-**Deliverables you must maintain:**
+### Installation
 
-* `/docs/StudyPlan.md` — living plan with milestones & checklists.
-* `/docs/CodebaseMap.md` — modules, entry points, build/run/test, key files.
-* `/docs/Glossary.md` — domain & project terms.
-* `/docs/Questions.md` — open questions with owner & status.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/TauricResearch/TradingAgents.git
+    cd TradingAgents
+    ```
 
-**Constraints:**
+2.  **Create a virtual environment:**
+    ```bash
+    conda create -n tradingagents python=3.13
+    conda activate tradingagents
+    ```
 
-* If you’re unsure, say so and propose how to verify.
-* Flag risky steps (e.g., scripts that modify files) and suggest safe read‑only alternatives.
-* Redact or avoid secrets; remind me to use `.env` and sample configs.
+3.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-**Kickoff Now:**
+### Required APIs
 
-1. Ask me for: (a) stack, (b) package manager/build tool, (c) how to run tests, (d) which part I must contribute to first.
-2. Propose a 5‑day learning plan tailored to my answers, with daily goals and artifacts to update.
-3. Suggest **repo‑scan commands** (read‑only) and tell me what to paste back.
-4. After I paste outputs, synthesize a **Codebase Map** and a **First Task** I can ship.
-
----
-
-## 2) First‑Session Script (what the AI should do)
-
-1. Confirm goals & constraints in ≤6 bullets.
-2. Provide a minimal **Day 0 scan kit** (below) and ask me to paste results.
-3. From outputs, draft `/docs/CodebaseMap.md` v0.1.
-4. Propose a **5‑day plan** with success criteria & daily quiz.
-5. Give me my **first tiny PR** target (doc fix, typo, comment, or harmless refactor) to validate setup.
-
----
-
-## 3) Day 0 Repo Scan Kit (read‑only)
-
-Use these commands (adapt to your stack). Paste results back to the AI (trim long outputs).
-
-**Language/size/layout**
+You will need API keys from Finnhub and OpenAI.
 
 ```bash
-# Top‑level view (ignore heavy dirs)
-find . -maxdepth 2 -type d | sed 's|^./||' | grep -Ev 'node_modules|.git|dist|build|target|venv|.next|.turbo'
-
-# Code by language
-npx cloc . 2>/dev/null || cloc .
+export FINNHUB_API_KEY=$YOUR_FINNHUB_API_KEY
+export OPENAI_API_KEY=$YOUR_OPENAI_API_KEY
 ```
 
-**Dependency & scripts (JS/TS)**
-
-```bash
-cat package.json | jq '{name, scripts, dependencies, devDependencies}'
-# Or
-jq '.scripts' package.json
-```
-
-**Python**
-
-```bash
-python -V || python3 -V
-cat pyproject.toml 2>/dev/null || cat setup.cfg 2>/dev/null || cat requirements.txt 2>/dev/null
-```
-
-**Java/Gradle**
-
-```bash
-./gradlew tasks --all | head -n 200
-./gradlew test --dry-run
-```
-
-**Go/Rust**
-
-```bash
-go list -m all | head -n 50
-cargo metadata --no-deps -q | head -n 80
-```
-
-**Tests & CI**
-
-```bash
-rg -n "describe\(|it\(|test\(" -S || grep -R "describe\|it\|@Test" -n .
-ls -la .github/workflows 2>/dev/null
-```
-
-**Entrypoints & configs**
-
-```bash
-rg -n "main\(|createRoot\(|bootstrap\(|FastAPI\(|Flask\(|Express\(|ApolloServer" -S
-rg -n "\.env|dotenv|config|settings|application\.yml|application\.yaml" -S
-```
-
----
-
-## 4) Five‑Day Learning Plan (template)
-
-**Day 1 — High‑level map**
-
-* Read top‑level layout, package/build files, README, CI.
-* Output: `/docs/CodebaseMap.md` v0.2 with modules & entry points.
-* Quiz (examples): What starts the app? Where are tests? How do we run them?
-
-**Day 2 — Run & test**
-
-* Get local run working; run unit tests and 1 integration test.
-* Output: Commands & troubleshooting notes in `StudyPlan.md`.
-* Quiz: What environment vars are required? What’s the default port?
-
-**Day 3 — Data & APIs**
-
-* Sketch data model and main APIs (graph of types/endpoints).
-* Output: Add diagrams or bullet maps to `CodebaseMap.md`.
-* Quiz: Which module owns persistence? Where are DTOs/schemas?
-
-**Day 4 — Critical path**
-
-* Trace a primary user flow end‑to‑end (e.g., Sign‑in → Dashboard).
-* Output: Sequence of files/functions touched with short notes.
-* Quiz: Which functions are most complex? Where are guardrails/tests?
-
-**Day 5 — Ship a tiny change**
-
-* Pick a 30–60 min fix/refactor; add/adjust tests.
-* Output: PR link, what changed, before/after behavior.
-* Quiz: Risk areas? Rollback plan? Next 2 learning targets.
-
-> If you have more time, extend to Week 2: perf profiling, reliability, domain deep dive, and ownership map.
-
----
-
-## 5) Files to add to your repo (templates)
-
-### `/docs/StudyPlan.md`
-
-```markdown
-# Study Plan
-
-## Objectives
-- [ ] High‑level map
-- [ ] Run & test locally
-- [ ] Understand data & APIs
-- [ ] Trace critical path
-- [ ] Ship a tiny change
-
-## Schedule
-- Start: <date>  End: <date>  Timebox/day: <e.g., 45 min>
-
-## Milestones & Evidence
-- Day 1: <notes / links>
-- Day 2: <notes / links>
-- Day 3: <notes / links>
-- Day 4: <notes / links>
-- Day 5: <PR link>
-
-## Open Questions
-- [ ] Q1 — Owner: <name>  Needed by: <date>
-- [ ] Q2 — Owner: <name>  Needed by: <date>
-```
-
-### `/docs/CodebaseMap.md`
-
-```markdown
-# Codebase Map (living)
-
-## Modules / Packages
-- <module>: purpose, key deps, entrypoints
-
-## Build / Run / Test
-- Build: <cmd>
-- Run: <cmd>
-- Test: <cmd or dir>
-
-## Entrypoints & Key Files
-- <path>: role
-
-## Data & APIs
-- DB: <type>  Key tables/models: <list>
-- APIs: <REST/GraphQL/gRPC>; main endpoints/schemas
-
-## CI/CD
-- Workflows: <paths>
-- Quality gates: <linters/tests/coverage>
-```
-
-### `/docs/Glossary.md`
-
-```markdown
-# Glossary
-- Term: short definition / link to code
-```
-
-### `/docs/Questions.md`
-
-```markdown
-# Questions (with owners)
-- Q: <text>  Owner: <name>  Status: Open/Answered  Link: <issue/doc>
-```
-
----
-
-## 6) “Coach Config” (optional)
-
-Create `.ai/coach-config.json` so any AI tool knows your preferences.
-
-```json
-{
-  "style": { "concise": true, "bullets": true },
-  "cadence": { "questions_per_step": 4, "quiz_after_milestone": true },
-  "artifacts": ["/docs/StudyPlan.md", "/docs/CodebaseMap.md", "/docs/Glossary.md", "/docs/Questions.md"],
-  "risk_policy": { "mutating_commands": "explain_and_confirm" }
-}
-```
-
----
-
-## 7) Question Bank the AI should ask you
-
-* What’s the immediate deliverable you’re on the hook for?
-* Which platform(s) matter first (backend, web, mobile)?
-* Which package manager/build tool is authoritative?
-* How are secrets/env vars managed (sample env, vault)?
-* Which tests are considered “blocking” by CI?
-* Who can review/answer domain questions?
-
----
-
-## 8) Small First‑PR Ideas
-
-* Fix a README typo or add missing run/test instructions.
-* Add a sample `.env.example` (no secrets).
-* Tighten a type/interface, add a missing null‑check.
-* Convert one TODO comment into an issue and link it.
-
----
-
-## 9) Deep‑Dive Menu (pick as you go)
-
-* **Ownership map:** map maintainers to folders/packages.
-* **Error budget:** where do failures show up? (logs, metrics)
-* **Performance:** trace the slowest endpoint or render.
-* **Reliability:** feature flags, retries, timeouts, idempotency.
-* **Security:** authN/Z boundaries, data handling, audit.
-
----
-
-## 10) One‑liner Prompts (for quick asks)
-
-* “Summarize the responsibilities of `/src/server/` in 5 bullets; list top 3 risky files.”
-* “Given this test output, what is the smallest change to make it pass safely?”
-* “Trace the ‘Create Account’ flow: list functions in call order with file paths.”
-* “Generate ripgrep queries to locate all uses of `<term>` and suggest next reads.”
-
----
-
-## 11) Session Definition of Done (DoD)
-
-* I can run the project and at least one test locally.
-* I can describe the main modules and entrypoints.
-* I have a merged tiny PR (or a reviewed draft).
-* `StudyPlan.md` and `CodebaseMap.md` updated today.
-
----
-
-### How to use this kit
-
-1. Paste the **Master Prompt** into your AI and fill blanks.
-2. Run the **Day 0 Scan Kit**; paste outputs back.
-3. Commit the templates under `/docs/`; keep them updated.
-4. Aim for one small PR by Day 5.
-
+### Running the Application
+
+You can run the project in two ways:
+
+*   **Command-Line Interface (CLI):**
+    ```bash
+    python -m cli.main
+    ```
+    This will launch an interactive CLI that allows you to select the ticker, date, and other parameters.
+
+*   **Python Script:**
+    ```bash
+    python main.py
+    ```
+    This will run the `TradingAgentsGraph` with a pre-defined configuration from `tradingagents/default_config.py`.
+
+## 5. A 5-Day Learning Plan
+
+Here is a suggested plan to help you learn the codebase.
+
+### Day 1: High-Level Map
+
+*   **Goal:** Understand the project's purpose and how to run it.
+*   **Tasks:**
+    1.  Read this `LearningKit.md` file.
+    2.  Follow the steps in the "How to Run the Project" section to get the application running.
+    3.  Run both the CLI and the `main.py` script to see how they work.
+*   **Quiz:**
+    *   What is the main purpose of the TradingAgents project?
+    *   What is LangGraph used for in this project?
+    *   What are the two ways to run the application?
+
+### Day 2: Explore the Agents
+
+*   **Goal:** Understand the roles and responsibilities of the different agents.
+*   **Tasks:**
+    1.  Explore the `tradingagents/agents/` directory.
+    2.  Read the code for the `FundamentalsAnalyst` (`tradingagents/agents/analysts/fundamentals_analyst.py`) to see how it analyzes financial data.
+    3.  Read the code for the `Trader` (`tradingagents/agents/trader/trader.py`) to see how it makes decisions.
+*   **Quiz:**
+    *   What kind of data does the `NewsAnalyst` process?
+    *   Which agent is responsible for making the final trading decision?
+    *   Where would you look to understand how the agents collaborate?
+
+### Day 3: Understand the Data Flow
+
+*   **Goal:** Learn how the project gets data from external sources.
+*   **Tasks:**
+    1.  Explore the `tradingagents/dataflows/` directory.
+    2.  Look at `finnhub_utils.py` and `yfin_utils.py` to see how the project interacts with financial data APIs.
+    3.  Read `googlenews_utils.py` and `reddit_utils.py` to understand how news and social media data are collected.
+*   **Quiz:**
+    *   What are the main data sources for this project?
+    *   If you wanted to add a new data source, which directory would you modify?
+    *   What kind of information does `finnhub_utils.py` provide?
+
+### Day 4: Trace the Graph
+
+*   **Goal:** Understand how the agents are connected and how information flows between them.
+*   **Tasks:**
+    1.  Explore the `tradingagents/graph/` directory.
+    2.  Read `trading_graph.py` to see how the LangGraph is constructed.
+    3.  Look at `conditional_logic.py` to understand how the graph makes decisions about which agent to run next.
+*   **Quiz:**
+    *   What is the role of the `AgentState` in `tradingagents/agents/utils/agent_states.py`?
+    *   How does the graph pass information from one agent to another?
+    *   Which file defines the edges and nodes of the LangGraph?
+
+### Day 5: Ship a Tiny Change
+
+*   **Goal:** Make a small change to the code to solidify your understanding.
+*   **Tasks:**
+    1.  **Idea:** Modify the prompt for one of the agents. For example, you could change the prompt for the `NewsAnalyst` in `tradingagents/agents/analysts/news_analyst.py` to focus on a specific aspect of the news.
+    2.  Run the application and see how your change affects the output.
+*   **Quiz:**
+    *   What was the effect of your change?
+    *   What other small changes could you make to experiment with the system?
+    *   What part of the codebase do you want to explore next?
